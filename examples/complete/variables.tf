@@ -29,33 +29,34 @@ variable "instance_type" {
   default     = "t3.medium"
 }
 
+variable "instance_profile_name" {
+  type        = string
+  description = "Optional IAM instance profile to attach to the EC2 instance."
+
+  default = null
+}
+
 variable "root_volume_size" {
   type        = number
   description = "Encrypted root EBS volume size in GiB."
   default     = 15
 }
 
+variable "root_volume_type" {
+  type        = string
+  description = "EBS volume type for the root volume."
+
+  default = "gp3"
+
+  validation {
+    condition     = contains(["gp3", "gp2"], var.root_volume_type)
+    error_message = "root_volume_type must be either gp3 or gp2."
+  }
+}
+
 variable "associate_public_ip_address" {
   type        = bool
   description = "Whether to associate a public IPv4 address with the EC2 instance."
-  default     = false
-}
-
-variable "enable_route53_write_access" {
-  type        = bool
-  description = "Whether the EC2 instance IAM role can modify Route 53 records."
-  default     = false
-}
-
-variable "hosted_zone_id" {
-  type        = string
-  description = "Route 53 hosted zone ID that the instance IAM role is allowed to modify."
-  default     = ""
-}
-
-variable "enable_ecr_read_access" {
-  type        = bool
-  description = "Whether the EC2 instance IAM role can pull images from Amazon ECR."
   default     = false
 }
 
@@ -71,6 +72,18 @@ variable "data_volume_device" {
   default     = "/dev/sdb"
 }
 
+
+variable "data_volume_size" {
+  type        = number
+  description = "Size of the secondary EBS volume in GiB."
+
+  default = 50
+
+  validation {
+    condition     = var.data_volume_size >= 1
+    error_message = "data_volume_size must be at least 1 GiB."
+  }
+}
 
 variable "user_data" {
   type        = string

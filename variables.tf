@@ -62,6 +62,22 @@ variable "security_group_id" {
 # COMPUTE
 ################################################################################
 
+variable "ami_id" {
+  type        = string
+  description = "Optional AMI ID to use for the EC2 instance. When null, the module uses the latest matching Ubuntu AMI."
+
+  default = null
+
+  validation {
+    condition = (
+      var.ami_id == null ||
+      trimspace(var.ami_id) != ""
+    )
+
+    error_message = "ami_id must be null or a non-empty AMI ID."
+  }
+}
+
 variable "instance_type" {
   type        = string
   description = "EC2 instance type."
@@ -73,6 +89,30 @@ variable "instance_type" {
     error_message = "instance_type must not be empty."
   }
 }
+
+variable "instance_profile_name" {
+  type        = string
+  description = "Optional IAM instance profile to attach to the EC2 instance."
+
+  default = null
+
+  validation {
+    condition = (
+      var.instance_profile_name == null ||
+      trimspace(var.instance_profile_name) != ""
+    )
+
+    error_message = "instance_profile_name must be null or a non-empty string."
+  }
+}
+
+variable "associate_public_ip_address" {
+  type        = bool
+  description = "Whether to associate a public IPv4 address with the compute instance."
+
+  default = false
+}
+
 
 variable "root_volume_size" {
   type        = number
@@ -86,56 +126,22 @@ variable "root_volume_size" {
   }
 }
 
-variable "associate_public_ip_address" {
-  type        = bool
-  description = "Whether to associate a public IPv4 address with the compute instance."
+variable "root_volume_type" {
+  type        = string
+  description = "EBS volume type for the root volume."
 
-  default = false
+  default = "gp3"
+
+  validation {
+    condition     = contains(["gp3", "gp2"], var.root_volume_type)
+    error_message = "root_volume_type must be either gp3 or gp2."
+  }
 }
 
 variable "user_data" {
   type        = string
   description = "Fully rendered EC2 user-data supplied by the calling module."
-}
-
-
-
-
-################################################################################
-# ROUTE 53 / IAM
-################################################################################
-
-variable "enable_route53_write_access" {
-  type        = bool
-  description = "Whether the compute instance can modify records in the supplied Route 53 hosted zone."
-  default     = false
-}
-
-variable "hosted_zone_id" {
-  type        = string
-  description = "Route 53 hosted zone ID supplied to the compute module when Route 53 write access is enabled."
-  default     = ""
-
-  validation {
-    condition = (
-      var.enable_route53_write_access == false
-      ||
-      trimspace(var.hosted_zone_id) != ""
-    )
-
-    error_message = "hosted_zone_id must be provided when enable_route53_write_access is true."
-  }
-}
-
-
-################################################################################
-# AMAZON ECR
-################################################################################
-
-variable "enable_ecr_read_access" {
-  type        = bool
-  description = "Whether the compute instance receives IAM permissions required to pull images from Amazon ECR."
-  default     = false
+  default     = null
 }
 
 

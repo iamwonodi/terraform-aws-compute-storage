@@ -19,7 +19,7 @@
 ################################################################################
 
 module "compute" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute.git?ref=v1.0.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute.git?ref=v1.1.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -28,15 +28,15 @@ module "compute" {
   subnet_id         = var.subnet_id
   security_group_id = var.security_group_id
 
-  instance_type    = var.instance_type
-  root_volume_size = var.root_volume_size
+  ami_id                = var.ami_id
+  instance_type         = var.instance_type
+  instance_profile_name = var.instance_profile_name
+
 
   associate_public_ip_address = var.associate_public_ip_address
 
-  enable_route53_write_access = var.enable_route53_write_access
-  hosted_zone_id              = var.hosted_zone_id
-
-  enable_ecr_read_access = var.enable_ecr_read_access
+  root_volume_size = var.root_volume_size
+  root_volume_type = var.root_volume_type
 
   user_data = var.user_data
 }

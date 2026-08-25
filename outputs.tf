@@ -17,6 +17,11 @@ output "availability_zone" {
   value       = module.compute.availability_zone
 }
 
+output "instance_profile_name" {
+  description = "IAM instance profile attached to the EC2 instance, or null when no profile was supplied."
+  value       = module.compute.instance_profile_name
+}
+
 
 ################################################################################
 # STORAGE OUTPUTS
