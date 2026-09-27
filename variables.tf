@@ -78,6 +78,13 @@ variable "ami_id" {
   }
 }
 
+variable "ami_lookup_enabled" {
+  type        = bool
+  description = "Whether the compute module looks up the latest Ubuntu AMI. When null, the lookup runs only when ami_id is null. Set false when ami_id is known only after apply (for example an AMI built in the same apply): Terraform must know at plan time whether the lookup exists."
+
+  default = null
+}
+
 variable "instance_type" {
   type        = string
   description = "EC2 instance type."

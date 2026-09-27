@@ -19,7 +19,7 @@
 ################################################################################
 
 module "compute" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute.git?ref=v1.1.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute.git?ref=v1.2.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -29,9 +29,9 @@ module "compute" {
   security_group_id = var.security_group_id
 
   ami_id                = var.ami_id
+  ami_lookup_enabled    = var.ami_lookup_enabled
   instance_type         = var.instance_type
   instance_profile_name = var.instance_profile_name
-
 
   associate_public_ip_address = var.associate_public_ip_address
 

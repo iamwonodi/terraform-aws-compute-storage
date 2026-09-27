@@ -234,6 +234,13 @@ Compute Storage
 
 This keeps AMI creation and EC2 provisioning as separate concerns.
 
+When that AMI is built in the same apply as the host, its ID is unknown at plan time. Set `ami_lookup_enabled = false` as well, so Terraform does not need to know whether `ami_id` is null to plan the Ubuntu lookup:
+
+```hcl
+ami_id             = module.ubuntu_ami.ami_id
+ami_lookup_enabled = false
+```
+
 Terraform modules are designed to accept caller-provided values through input variables, which makes this pattern appropriate for reusable module composition.
 
 ---
@@ -244,7 +251,7 @@ A typical caller can provide the compute configuration together with an existing
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.1.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -364,6 +371,18 @@ ami_id = var.ubuntu_ami_id
 ```
 
 This is useful when the AMI has been created by an independent image-building workflow.
+
+---
+
+## `ami_lookup_enabled`
+
+Optional. Whether the underlying compute module looks up the latest Ubuntu AMI.
+
+```hcl
+ami_lookup_enabled = null
+```
+
+When `null`, the lookup runs only when `ami_id` is null. Set `false` when `ami_id` is known only after apply, such as an AMI built in the same apply; without it the plan stops with "Invalid count argument".
 
 ---
 
@@ -812,7 +831,7 @@ Then:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.1.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -869,7 +888,7 @@ The resulting AMI can then be supplied to compute-storage:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.1.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -965,7 +984,7 @@ A complete configuration may look like:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.1.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -1172,3 +1191,23 @@ Application  → caller-owned user-data
 ```
 
 This is the intended role of `terraform-aws-compute-storage`: **compose independently reusable infrastructure modules without taking ownership of responsibilities that belong elsewhere.**
+
+---
+
+# Testing
+
+```powershell
+terraform fmt -recursive
+terraform init
+terraform validate
+terraform test
+```
+
+`terraform test` plans the module against a mocked AWS provider (no credentials needed) with an AMI ID that is unknown until apply.
+
+---
+
+# Releases
+
+* `v1.2.0` uses `terraform-aws-compute` v1.2.0 and passes its new optional `ami_lookup_enabled` input through. Left null, the module behaves as `v1.1.0`.
+* `v1.1.0` caller-supplied AMI.
