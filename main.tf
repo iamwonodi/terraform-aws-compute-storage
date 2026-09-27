@@ -38,7 +38,9 @@ module "compute" {
   root_volume_size = var.root_volume_size
   root_volume_type = var.root_volume_type
 
-  user_data = var.user_data
+  # The caller supplies the rendered script as plain text (see the user_data
+  # input); terraform-aws-compute expects it base64-encoded.
+  user_data = var.user_data == null ? null : base64encode(var.user_data)
 }
 
 

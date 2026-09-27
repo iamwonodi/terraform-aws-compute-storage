@@ -147,7 +147,7 @@ variable "root_volume_type" {
 
 variable "user_data" {
   type        = string
-  description = "Fully rendered EC2 user-data supplied by the calling module."
+  description = "Fully rendered EC2 user-data script, as plain text (for example a templatefile() result). The module base64-encodes it for EC2."
   default     = null
 }
 

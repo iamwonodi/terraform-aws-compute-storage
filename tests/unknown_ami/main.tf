@@ -12,6 +12,11 @@ variable "ami_lookup_enabled" {
   default = null
 }
 
+variable "user_data" {
+  type    = string
+  default = null
+}
+
 resource "random_id" "ami" {
   byte_length = 8
 }
@@ -30,4 +35,5 @@ module "host" {
   # The raw attribute: Terraform cannot tell whether it is null until apply.
   ami_id             = random_id.ami.b64_url
   ami_lookup_enabled = var.ami_lookup_enabled
+  user_data          = var.user_data
 }
