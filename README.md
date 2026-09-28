@@ -251,7 +251,7 @@ A typical caller can provide the compute configuration together with an existing
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.1"
 
   project_name = var.project_name
   environment  = var.environment
@@ -840,7 +840,7 @@ Then:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.1"
 
   project_name = var.project_name
   environment  = var.environment
@@ -897,7 +897,7 @@ The resulting AMI can then be supplied to compute-storage:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.1"
 
   project_name = var.project_name
   environment  = var.environment
@@ -993,7 +993,7 @@ A complete configuration may look like:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.1"
 
   project_name = var.project_name
   environment  = var.environment
@@ -1218,6 +1218,7 @@ terraform test
 
 # Releases
 
+* `v1.3.1` takes the data volume's availability zone from the host's subnet instead of from the instance. A replacement instance's zone is unknown until it exists, and a volume cannot change zone, so every host replacement also planned to replace, and so empty, the data volume. The subnet already exists and never moves, so replacing the host now keeps the volume and reattaches it. Inputs and outputs are unchanged. The module now reads the subnet (`ec2:DescribeSubnets`).
 * `v1.3.0` uses `terraform-aws-compute` v1.3.0 and passes its new optional `user_data_replace_on_change` input through (default `false`, so existing hosts are unaffected).
 * `v1.2.1` base64-encodes `user_data` before passing it to `terraform-aws-compute`, which expects it encoded. Earlier releases passed the plain-text script through unchanged, so a plan stopped with "user_data_base64 ... must be base64-encoded" as soon as the script was fully known. Callers keep passing plain text.
 * `v1.2.0` uses `terraform-aws-compute` v1.2.0 and passes its new optional `ami_lookup_enabled` input through. Left null, the module behaves as `v1.1.0`.

@@ -56,7 +56,7 @@ module "ebs_storage" {
   service_name = var.service_name
 
   instance_id       = module.compute.instance_id
-  availability_zone = module.compute.availability_zone
+  availability_zone = data.aws_subnet.host.availability_zone
 
   device_name = var.data_volume_device
   volume_size = var.data_volume_size
