@@ -30,3 +30,17 @@ run "plain_text_user_data" {
     user_data          = "#!/usr/bin/env bash\nset -euo pipefail\necho \"database host bootstrap\"\n"
   }
 }
+
+run "user_data_replace_on_change" {
+  command = plan
+
+  module {
+    source = "./tests/unknown_ami"
+  }
+
+  variables {
+    ami_lookup_enabled          = false
+    user_data                   = "#!/usr/bin/env bash\necho \"database host bootstrap\"\n"
+    user_data_replace_on_change = true
+  }
+}

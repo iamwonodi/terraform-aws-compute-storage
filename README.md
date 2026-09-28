@@ -251,7 +251,7 @@ A typical caller can provide the compute configuration together with an existing
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.1"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -527,6 +527,13 @@ user_data = local.database_user_data
 ```
 
 Supply the script as plain text. The module base64-encodes it for EC2.
+
+User data runs only at first boot. When the host is rebuilt from its script, set `user_data_replace_on_change = true` so a changed script replaces the instance instead of being stored and never run. The data volume is a separate resource, so it is kept and reattached to the new instance:
+
+```hcl
+user_data                   = local.database_user_data
+user_data_replace_on_change = true
+```
 
 ---
 
@@ -833,7 +840,7 @@ Then:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.1"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -890,7 +897,7 @@ The resulting AMI can then be supplied to compute-storage:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.1"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -986,7 +993,7 @@ A complete configuration may look like:
 
 ```hcl
 module "compute_storage" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.2.1"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute-storage.git?ref=v1.3.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -1211,6 +1218,7 @@ terraform test
 
 # Releases
 
+* `v1.3.0` uses `terraform-aws-compute` v1.3.0 and passes its new optional `user_data_replace_on_change` input through (default `false`, so existing hosts are unaffected).
 * `v1.2.1` base64-encodes `user_data` before passing it to `terraform-aws-compute`, which expects it encoded. Earlier releases passed the plain-text script through unchanged, so a plan stopped with "user_data_base64 ... must be base64-encoded" as soon as the script was fully known. Callers keep passing plain text.
 * `v1.2.0` uses `terraform-aws-compute` v1.2.0 and passes its new optional `ami_lookup_enabled` input through. Left null, the module behaves as `v1.1.0`.
 * `v1.1.0` caller-supplied AMI.

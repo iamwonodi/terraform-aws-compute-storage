@@ -151,6 +151,13 @@ variable "user_data" {
   default     = null
 }
 
+variable "user_data_replace_on_change" {
+  type        = bool
+  description = "Whether a change to user_data replaces the instance (the persistent data volume is kept and reattached). User data runs only at first boot, so when false (the default) a changed script is stored but never runs."
+
+  default = false
+}
+
 
 ################################################################################
 # SECONDARY EBS STORAGE

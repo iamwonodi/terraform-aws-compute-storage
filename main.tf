@@ -19,7 +19,7 @@
 ################################################################################
 
 module "compute" {
-  source = "git::https://github.com/iamwonodi/terraform-aws-compute.git?ref=v1.2.0"
+  source = "git::https://github.com/iamwonodi/terraform-aws-compute.git?ref=v1.3.0"
 
   project_name = var.project_name
   environment  = var.environment
@@ -40,7 +40,8 @@ module "compute" {
 
   # The caller supplies the rendered script as plain text (see the user_data
   # input); terraform-aws-compute expects it base64-encoded.
-  user_data = var.user_data == null ? null : base64encode(var.user_data)
+  user_data                   = var.user_data == null ? null : base64encode(var.user_data)
+  user_data_replace_on_change = var.user_data_replace_on_change
 }
 
 
